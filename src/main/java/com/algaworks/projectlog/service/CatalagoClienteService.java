@@ -14,6 +14,11 @@ public class CatalagoClienteService {
 	@Autowired
 	private ClienteRepository repository;
 	
+	public Cliente buscar(Long clienteId) {
+		return repository.findById(clienteId)
+				.orElseThrow(() -> new NegocioException("Cliente não encontrado"));
+	}
+	
 	@Transactional
 	public Cliente salvar(Cliente cliente) {
 		boolean emailEmUso = repository.findByEmail(cliente.getEmail())
