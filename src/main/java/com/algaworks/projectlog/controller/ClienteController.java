@@ -22,12 +22,14 @@ import com.algaworks.projectlog.model.Cliente;
 import com.algaworks.projectlog.repository.ClienteRepository;
 import com.algaworks.projectlog.service.CatalagoClienteService;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 @RestController
 @RequestMapping("/clientes")
 public class ClienteController {
 	
 	
-	@Autowired
 	private ClienteRepository repository;
 	private CatalagoClienteService service;
 	
