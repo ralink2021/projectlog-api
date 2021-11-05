@@ -6,6 +6,8 @@ import javax.validation.Valid;
 
 import com.algaworks.projectlog.dto.DestinatarioDTO;
 import com.algaworks.projectlog.dto.EntregaDTO;
+import com.algaworks.projectlog.mappers.EntregaMapper;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,37 +32,24 @@ public class EntregaController {
 	/* Injeção de Dependencia sendo feita pelo construtor em vez de usar o @Autowired */
 	private SolicitacaoEntregaService entregaService;
 	private EntregaRepository repository;
+	private EntregaMapper mapper;
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Entrega solicitar(@Valid @RequestBody Entrega entrega) {
-		return entregaService.solicitar(entrega);
+	public EntregaDTO solicitar(@Valid @RequestBody Entrega entrega) {
+		Entrega entregaSolicitada = entregaService.solicitar(entrega);
+		return mapper.toModel(entregaSolicitada);
 	}
 	
 	@GetMapping
-	public List<Entrega> listar(){
-		return repository.findAll();
+	public List<EntregaDTO> listar(){
+		return mapper.toCollectionModel(repository.findAll());
 	}
 	
 	@GetMapping("/{entregaId}")
 	public ResponseEntity<EntregaDTO> buscar(@PathVariable Long entregaId){
 		return repository.findById(entregaId)
-				.map(entrega -> {
-					EntregaDTO entregaDTO = new EntregaDTO();
-					entregaDTO.setId(entrega.getId());
-					entregaDTO.setNomeCliente(entrega.getCliente().getNome());
-					entregaDTO.setDestinatario(new DestinatarioDTO());
-					entregaDTO.getDestinatario().setNome(entrega.getDestinatario().getNome());
-					entregaDTO.getDestinatario().setLogradouro(entrega.getDestinatario().getLogradouro());
-					entregaDTO.getDestinatario().setNumero(entrega.getDestinatario().getNumero());
-					entregaDTO.getDestinatario().setComplemento(entrega.getDestinatario().getComplemento());
-					entregaDTO.getDestinatario().setBairro(entrega.getDestinatario().getBairro());
-					entregaDTO.setTaxa(entrega.getTaxa());
-					entregaDTO.setStatus(entrega.getStatus());
-					entregaDTO.setDataPedido(entrega.getDataPedido());
-					entregaDTO.setDataFinalizacao(entrega.getDataFinalizacao());
-					return ResponseEntity.ok(entregaDTO);
-				})
+				.map(entrega -> ResponseEntity.ok(mapper.toModel(entrega)))
 				.orElse(ResponseEntity.notFound().build());
 	}
 }
