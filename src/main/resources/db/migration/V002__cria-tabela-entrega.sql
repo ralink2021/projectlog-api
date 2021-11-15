@@ -1,5 +1,5 @@
 CREATE TABLE Entrega (
-	id bigint not null serial,
+	id bigint not null auto_increment,
     cliente_id bigint not null,
     taxa decimal(10,2) not null,
     status varchar(20) not null,
